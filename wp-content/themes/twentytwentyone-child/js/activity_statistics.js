@@ -3,9 +3,9 @@ jQuery(document).ready(function () {
     var month = d.getMonth() + 1;
     buildChart(month);
     jQuery('[data-form="select-month"]').submit(function (e) {
-            e.preventDefault();
-            var month = jQuery(this).find('[data-selected="month"]:selected').val();
-            buildChart(month);
+        e.preventDefault();
+        var month = jQuery(this).find('[data-selected="month"]:selected').val();
+        buildChart(month);
     })
 });
 
@@ -14,10 +14,10 @@ function buildChart(month) {
         type: "post",
         dataType: "json",
         url: myAjax.ajaxurl,
-        data: {action: "users_activity_statistics", month:month},
+        data: {action: "users_activity_statistics", month: month},
         success: function (response) {
             var date = new Date(2021, month - 1,);
-            var theMonth = date.toLocaleString('en-us', { month: 'long' });
+            var theMonth = date.toLocaleString('en-us', {month: 'long'});
             jQuery('[data-month="display-month"]').text(theMonth);
 
             var ctx = document.getElementById('statchart').getContext('2d');
