@@ -61,7 +61,7 @@ function buildChart(month) {
                     pointBackgroundColor: dataColor,
                     fill: false,
                     lineTension: 0,
-                    pointRadius: 5
+                    pointRadius: 3
                 }
             }
 

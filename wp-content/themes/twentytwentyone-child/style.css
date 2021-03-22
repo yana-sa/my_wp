@@ -119,6 +119,12 @@ table {
 
 .display-month {
     text-align: center;
+    font-size: 25px;
+}
+
+.display-descr {
+    text-align: center;
+    font-size: 13px;
 }
 
 .statchat {

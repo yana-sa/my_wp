@@ -20,7 +20,7 @@ $months = array_reduce(range(1,12),function($rslt,$m) {
             <div class="chart-div">
                 <div class="display-month" data-month="display-month"><?php echo $months[3]?></div>
                 <canvas id="statchart" class="statchat" width="600" height="400"></canvas>
-                <div class="display-month">Y axis - number of posts, X axis- days</div>
+                <div class="display-descr">Y axis - number of posts, X axis- days</div>
             </div>
             <div class="form-stat">
                 <form method="post" data-form="select-month">
