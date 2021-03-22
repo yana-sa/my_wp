@@ -105,3 +105,33 @@ table {
     background-color: #4e4b59;
     color: white;
 }
+
+.chart-div {
+    background: white;
+    padding: 20px;
+    border: solid;
+    border-color: #39414d;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 100%;
+}
+
+.display-month {
+    text-align: center;
+}
+
+.statchat {
+    display: block;
+    width: 610px;
+    height: 406px;
+    align-self: center;
+}
+
+.form-stat {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    background-color: white;
+    padding: 30px;
+}

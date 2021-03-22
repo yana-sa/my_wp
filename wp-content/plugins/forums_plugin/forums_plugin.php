@@ -265,9 +265,14 @@ function forums_script_enqueue()
 {
     wp_register_script('forums-js', get_stylesheet_directory_uri() . '/js/forums.js', ['jquery']);
     wp_localize_script('forums-js', 'myAjax', ['ajaxurl' => admin_url('admin-ajax.php')]);
+    wp_register_script('activity_statistics-js', get_stylesheet_directory_uri() . '/js/activity_statistics.js', ['jquery']);
+    wp_localize_script('activity_statistics-js', 'myAjax', ['ajaxurl' => admin_url('admin-ajax.php')]);
+    wp_register_script('chart-min-js', 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js');
 
     wp_enqueue_script('jquery-js');
     wp_enqueue_script('forums-js');
+    wp_enqueue_script('activity_statistics-js');
+    wp_enqueue_script('chart-min-js');
 }
 
 add_action('init', 'forums_script_enqueue');
@@ -303,6 +308,41 @@ function topic_posts_pagination()
 }
 
 add_action('wp_ajax_topic_posts_pagination', 'topic_posts_pagination');
+
+function users_activity_statistics()
+{
+    global $wpdb;
+    $month = $_POST['month'];
+    $statistics = $wpdb->get_results(
+        "SELECT author, `day`, COUNT(*) AS posts
+                FROM
+                (SELECT u.display_name AS `author`, DAY(p.`post_date`) AS `day`, p.ID AS `post`
+                      FROM wp_posts p
+                                
+                      INNER JOIN wp_users u
+                      ON u.ID = p.post_author
+                                
+                      WHERE p.post_type = 'topic_post'
+                      AND MONTH(p.`post_date`) = $month) res 
+
+                GROUP BY author, `day`
+                ORDER BY author",
+        ARRAY_A);
+
+    $statistics_upd = [];
+    $authors = array_unique(array_column($statistics, 'author'));
+    foreach ($authors as $author) {
+        $statistics_upd[$author] = array_values(array_fill(1, 31, "0"));
+    }
+
+    foreach ($statistics as $stat) {
+        $statistics_upd[$stat['author']][$stat['day']] = $stat['posts'];
+    }
+
+    wp_send_json($statistics_upd);
+}
+
+add_action('wp_ajax_users_activity_statistics', 'users_activity_statistics');
 
 function forums_plugin_deactivate()
 {
