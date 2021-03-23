@@ -314,19 +314,17 @@ function users_activity_statistics()
     global $wpdb;
     $month = $_POST['month'];
     $statistics = $wpdb->get_results(
-        "SELECT author, `day`, COUNT(*) AS posts
-                FROM
-                (SELECT u.display_name AS `author`, DAY(p.`post_date`) AS `day`, p.ID AS `post`
-                      FROM wp_posts p
-                                
-                      INNER JOIN wp_users u
-                      ON u.ID = p.post_author
-                                
-                      WHERE p.post_type = 'topic_post'
-                      AND MONTH(p.`post_date`) = $month) res 
-
-                GROUP BY author, `day`
-                ORDER BY author",
+        "SELECT u.display_name AS `author`, DAY(p.`post_date`) AS `day`, COUNT(*) AS posts
+                FROM wp_posts p
+                                                
+                INNER JOIN wp_users u
+                ON u.ID = p.post_author
+                                                
+                WHERE p.post_type = 'topic_post'
+                AND MONTH(p.`post_date`) = $month 
+                
+                   GROUP BY author, `day`
+                   ORDER BY author",
         ARRAY_A);
 
     $statistics_upd = [];
