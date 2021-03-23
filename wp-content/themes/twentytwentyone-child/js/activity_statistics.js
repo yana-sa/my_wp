@@ -2,6 +2,7 @@ jQuery(document).ready(function () {
     var d = new Date();
     var month = d.getMonth() + 1;
     buildChart(month);
+
     jQuery('[data-form="select-month"]').submit(function (e) {
         e.preventDefault();
         var month = jQuery(this).find('[data-selected="month"]:selected').val();

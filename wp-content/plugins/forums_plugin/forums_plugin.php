@@ -330,7 +330,8 @@ function users_activity_statistics()
     $statistics_upd = [];
     $authors = array_unique(array_column($statistics, 'author'));
     foreach ($authors as $author) {
-        $statistics_upd[$author] = array_values(array_fill(1, 31, "0"));
+        $days_num = date('t', mktime(0, 0, 0, $month, 1, 2021));
+        $statistics_upd[$author] = array_values(array_fill(1, $days_num, "0"));
     }
 
     foreach ($statistics as $stat) {
