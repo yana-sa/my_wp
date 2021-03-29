@@ -141,3 +141,72 @@ table {
     background-color: white;
     padding: 30px;
 }
+
+.wrap-form {
+    width: 790px;
+    background: #ffec92;
+    border-radius: 10px;
+    overflow: hidden;
+    padding: 72px 55px 90px 55px;
+}
+
+.wrap-form.org-edit {
+    text-align: center;
+}
+
+.wrap-h4 {
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #dbd5f4;
+    border: solid;
+    border-color: #a090e2;
+}
+
+.form-org {
+    display: flex;
+    flex-direction: column;
+}
+
+.orgform-section {
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.orgform-select {
+    margin: 0 90px;
+    padding: 15px 35px;
+    background-color: #ccc7e0;
+    text-align: start;
+}
+
+.orgform-option {
+
+}
+
+.wrap-list {
+    width: 790px;
+    background: #ffec92;
+    border-radius: 10px;
+    overflow: hidden;
+    font-weight: 500;
+    padding: 65px 160px;
+}
+
+.orglist {
+
+}
+
+.orglist li{
+    padding: 5px;
+}
+
+.org_sub_list::marker {
+    font-size: 1.5rem;
+}
+
+.org_list::marker {
+    font-size: 2.5rem;
+}

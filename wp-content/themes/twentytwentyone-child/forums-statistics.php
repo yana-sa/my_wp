@@ -9,7 +9,6 @@ $months = array_reduce(range(1,12),function($rslt,$m) {
     return $rslt;
 });
 ?>
-
     <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
         <header class="entry-header alignwide">

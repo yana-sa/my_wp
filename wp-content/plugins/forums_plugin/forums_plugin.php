@@ -345,10 +345,7 @@ add_action('wp_ajax_users_activity_statistics', 'users_activity_statistics');
 
 function forums_plugin_deactivate()
 {
-    $query = new WP_Query([
-        'post_type' => 'forum',
-        'post_status' => 'publish'
-    ]);
+    $query = new WP_Query(['post_type' => ['forum', 'topic', 'topic_post']]);
 
     while ($query->have_posts()) {
         $query->the_post();
