@@ -173,7 +173,7 @@ function organizations_data(): array
         'post_type' => 'organization',
         'nopaging' => true,
         'meta_query' => [
-                ['key' => '_parent',
+            ['key' => '_parent',
                 'compare' => 'NOT EXISTS'],
         ]
     ]);
@@ -188,13 +188,6 @@ function organizations_data(): array
             'link' => get_the_permalink(),
             'subsidiaries' => get_organization_subsidiaries($id)
         ];
-
-        foreach ($orgs as $i => $org) {
-            $parent = get_post_meta($id, '_parent');
-            if ($parent == $id) {
-                unset($orgs[$i]);
-            }
-        }
     }
 
     return $orgs;

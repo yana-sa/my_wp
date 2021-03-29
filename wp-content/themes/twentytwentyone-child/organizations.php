@@ -16,19 +16,21 @@ get_header();
         <div class="entry-content alignwide">
             <div class="wrap-list">
                 <h4 class="wrap-h4">Organizations with subsidiaries</h4>
-            <ul class="orglist">
-            <?php $organizations = organizations_data();
-            foreach ($organizations as $organization) { ?>
-                <li class="org_list"><a href="<?php $organization['link'] ?>"><?php echo $organization['name'] ?></a></li>
-                <?php if (!empty($organization['subsidiaries'])) { ?>
-                <ul>
-                    <?php foreach ($organization['subsidiaries'] as $subsidiary) { ?>
-                    <li class="org_sub_list"><a href="<?php $subsidiary['link'] ?>"><?php echo $subsidiary['name'] ?></a></li>
-                    <?php } ?>
+                <ul class="orglist">
+                    <?php $organizations = organizations_data();
+                    foreach ($organizations as $organization) { ?>
+                        <li class="org_list"><a href="<?php $organization['link'] ?>"><?php echo $organization['name'] ?></a></li>
+                        <?php if (!empty($organization['subsidiaries'])) { ?>
+                            <ul>
+                                <?php foreach ($organization['subsidiaries'] as $subsidiary) { ?>
+                                    <li class="org_sub_list">
+                                        <a href="<?php $subsidiary['link'] ?>"><?php echo $subsidiary['name'] ?></a>
+                                    </li>
+                                <?php } ?>
+                            </ul>
+                        <?php }
+                    } ?>
                 </ul>
-            <?php }
-            } ?>
-            </ul>
             </div>
 
             <div class="wrap-list">
