@@ -3,6 +3,7 @@
  * Template Name: Organizations Page
  *
  */
+
 get_header();
 ?>
 
@@ -18,13 +19,25 @@ get_header();
                 <h4 class="wrap-h4">Organizations with subsidiaries</h4>
                 <ul class="orglist">
                     <?php $organizations = organizations_data();
+                    wp_reset_query();
                     foreach ($organizations as $organization) { ?>
-                        <li class="org_list"><a href="<?php $organization['link'] ?>"><?php echo $organization['name'] ?></a></li>
+                        <li class="org_list"><a href="<?php $organization['link'] ?>"><?php echo $organization['name'] ?></a>
+                            <?php if (get_current_user_id() == $organization['leader']) { ?>
+                            <form method="post" class="editform" action="<?php echo get_permalink(get_page_by_path('edit-organization')); ?>">
+                                <button type="submit" name="id" value="<?php echo $organization['id']; ?>" class="editlink">Edit!</button>
+                            </form>
+                            <?php } ?>
+                        </li>
                         <?php if (!empty($organization['subsidiaries'])) { ?>
                             <ul>
                                 <?php foreach ($organization['subsidiaries'] as $subsidiary) { ?>
                                     <li class="org_sub_list">
                                         <a href="<?php $subsidiary['link'] ?>"><?php echo $subsidiary['name'] ?></a>
+                                        <?php if (get_current_user_id() == $subsidiary['leader']  || get_current_user_id() == $subsidiary['parent_leader']) {?>
+                                            <form method="post" class="editform" action="<?php echo get_permalink(get_page_by_path('edit-organization')); ?>">
+                                                <button type="submit" name="id" value="<?php echo $subsidiary['id']; ?>" class="editlink">Edit!</button>
+                                            </form>
+                                        <?php } ?>
                                     </li>
                                 <?php } ?>
                             </ul>
@@ -35,7 +48,6 @@ get_header();
 
             <div class="wrap-list">
                 <h4 class="wrap-h4"><a href="<?php echo get_permalink(get_page_by_path('add-organization')) ?>" class="">Add organization</a>
-                <h4 class="wrap-h4"><a href="<?php echo get_permalink(get_page_by_path('edit-organization')) ?>" class="">Edit my organizations</a>
             </div>
         </div>
 

@@ -192,7 +192,7 @@ table {
     border-radius: 10px;
     overflow: hidden;
     font-weight: 500;
-    padding: 65px 160px;
+    padding: 65px 120px;
 }
 
 .orglist {
@@ -200,7 +200,7 @@ table {
 }
 
 .orglist li{
-    padding: 5px;
+    padding: 2px;
 }
 
 .org_sub_list::marker {
@@ -209,4 +209,21 @@ table {
 
 .org_list::marker {
     font-size: 2.5rem;
+}
+
+.editform {
+    display: contents;
+}
+
+.editlink {
+    background-color: #a090e2;
+    color: white;
+    padding: 0 0.5em;
+    text-decoration: none;
+    text-transform: uppercase;
+    float: right;
+}
+
+.editlink:hover {
+    background-color: #dbd5f4;
 }

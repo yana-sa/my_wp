@@ -186,46 +186,12 @@ function organizations_data(): array
             'id' => $id,
             'name' => get_the_title(),
             'link' => get_the_permalink(),
+            'leader' => get_post_meta(get_the_ID(), '_leader')[0],
             'subsidiaries' => get_organization_subsidiaries($id)
         ];
     }
 
     return $orgs;
-}
-
-function edit_organization_data($current_user): array
-{
-    wp_reset_query();
-    $query = new WP_Query([
-        'post_type' => 'organization',
-        'meta_key' => '_leader',
-        'meta_value' => $current_user,
-
-    ]);
-
-    $orgs_data = [];
-    if ($query->have_posts()) {
-        while ($query->have_posts()) {
-            $query->the_post();
-            $id = get_the_ID();
-            $orgs_data[] = [
-                'id' => $id,
-                'name' => get_the_title(),
-                'descr' => get_the_content(),
-                'members' => get_post_meta(get_the_ID(), '_members'),
-                'leader' => get_post_meta(get_the_ID(), '_leader'),
-            ];
-
-            $subsidiaries = get_organization_subsidiaries($id);
-            if (!empty($subsidiaries)) {
-                foreach ($subsidiaries as $i => $subs) {
-                    $orgs_data[] = $subs;
-                }
-            }
-        }
-    }
-
-    return $orgs_data;
 }
 
 function get_organization_subsidiaries($org_id): array
@@ -239,19 +205,37 @@ function get_organization_subsidiaries($org_id): array
     $subsidiaries_data = [];
     while ($subsidiaries->have_posts()) {
         $subsidiaries->the_post();
+        $parent = get_post_meta(get_the_ID(), '_parent')[0];
         $subsidiaries_data[] = [
             'id' => get_the_ID(),
             'name' => get_the_title(),
             'link' => get_the_permalink(),
-            'descr' => get_the_content(),
-            'members' => get_post_meta(get_the_ID(), '_members'),
-            'leader' => get_post_meta(get_the_ID(), '_leader'),
-            'parent' => get_post_meta(get_the_ID(), '_parent'),
+            'leader' => get_post_meta(get_the_ID(), '_leader')[0],
+            'parent' => $parent,
+            'parent_leader' => get_post_meta($parent, '_leader')[0]
         ];
     }
 
     wp_reset_query();
     return $subsidiaries_data;
+}
+
+function edit_organization_data(): array
+{
+    $id = !empty($_POST['id']) ? $_POST['id'] : null;
+    $org = get_post($id, ARRAY_A);
+    $parent = get_post_meta($id, '_parent');
+    $parent_leader = ($parent) ? get_post_meta($parent[0], '_leader') : [];
+
+    return [
+        'id' => $id,
+        'name' => $org['post_title'],
+        'descr' => $org['post_content'],
+        'members' => get_post_meta($id, '_members'),
+        'leader' => get_post_meta($id, '_leader'),
+        'parent' => $parent,
+        'parent_leader' => $parent_leader
+    ];
 }
 
 function edit_organization()
@@ -261,21 +245,26 @@ function edit_organization()
     $descr = !empty($_POST['org_desc']) ? $_POST['org_desc'] : null;
     $members = !empty($_POST['member']) ? $_POST['member'] : null;
     $leader = !empty($_POST['org_leader']) ? $_POST['org_leader'] : null;
-    $org_upd = [];
 
-    if ($name !== get_the_title($id) || $descr !== get_the_content($id)) {
-        $org_upd['ID'] = $id;
-        $org_upd['post_title'] = $name;
-        $org_upd['post_content'] = $descr;
-        wp_update_post($org_upd);
-    }
+    if ($id) {
+        $org_upd = [];
+        if ($name && $descr) {
+            $org_upd['ID'] = $id;
+            $org_upd['post_title'] = $name;
+            $org_upd['post_content'] = $descr;
+            wp_update_post($org_upd);
+        }
 
-    if ($members) {
-        update_post_meta($id, '_members', $members);
-    }
+        if ($members) {
+            update_post_meta($id, '_members', $members);
+        }
 
-    if ($leader) {
-        update_post_meta($id, '_leader', $leader);
+        if ($leader) {
+            update_post_meta($id, '_leader', $leader);
+        }
+
+        wp_redirect(get_permalink(get_page_by_path('organizations')));
+        exit;
     }
 }
 
