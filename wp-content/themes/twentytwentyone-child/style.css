@@ -31,7 +31,7 @@ body {
     margin: auto;
 }
 
-table {
+.tablediv table {
     background-color: white;
     border: solid;
     text-align: center;
@@ -226,4 +226,30 @@ table {
 
 .editlink:hover {
     background-color: #dbd5f4;
+}
+
+.gamefield-div {
+    min-width: 800px;
+    min-height: 800px;
+    margin: 50px;
+}
+
+.gamefield-div table {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.gamefield-div table tbody{
+    background: url("/wp-content/uploads/2021/04/map.jpg") no-repeat;
+    background-size: cover;
+}
+
+.cell{
+    height: 70px;
+    width: 70px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    display: inline-block;
 }
