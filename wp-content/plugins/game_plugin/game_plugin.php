@@ -74,6 +74,42 @@ function cell_post_type()
 
 add_action('init', 'cell_post_type');
 
+function get_cells()
+{
+    $cells = [];
+    for ($i = 10; $i >= 1; $i--) {
+        $cellscol = [];
+        $query = new WP_Query([
+            'post_type' => 'cell',
+            'nopaging' => true,
+            'meta_query' => [
+                'relation' => 'AND',
+                [
+                    'key' => '_y',
+                    'value' => $i
+                ],
+                [
+                    'key' => '_x',
+                    'value' => range(1, 10),
+                ]
+            ],
+            'orderby'  => 'meta_value_num',
+            'order'    => 'DESC'
+        ]);
+
+        while ($query->have_posts()) {
+            $query->the_post();
+            $cellscol[] = [
+                'x' => get_post_meta(get_the_ID(), '_x')[0],
+                'y' => get_post_meta(get_the_ID(), '_y')[0]
+            ];
+        }
+        $cells[$i] = $cellscol;
+    }
+
+    return $cells;
+}
+
 function game_plugin_deactivate()
 {
     $query = new WP_Query(['post_type' => 'cell']);

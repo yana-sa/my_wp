@@ -17,29 +17,11 @@ get_header();
     <div class="gamefield-div">
         <table>
             <tbody>
-            <?php
-            for ($i = 10; $i >= 1; $i--) {
-            $query = new WP_Query([
-                'post_type' => 'cell',
-                'nopaging' => true,
-                'meta_query' => [
-                    'relation' => 'AND',
-                    [
-                        'key' => '_y',
-                        'value' => $i
-                    ],
-                    [
-                        'key' => '_x',
-                        'value' => range(1, 10),
-                    ]
-                ],
-                'orderby'  => 'meta_value_num',
-                'order'    => 'DESC'
-            ]); ?>
+            <?php $cells = get_cells();
+                foreach ($cells as $cellscol) { ?>
                 <tr>
-            <?php while ($query->have_posts()) {
-                $query->the_post(); ?>
-                <td class="cell" data-x="<?php echo get_post_meta(get_the_ID(), '_x')[0] ?>" data-y="<?php echo get_post_meta(get_the_ID(), '_y')[0] ?>"></td>
+            <?php foreach ($cellscol as $cell) { ?>
+                <td class="cell" data-x="<?php echo $cell['x'] ?>" data-y="<?php echo $cell['y'] ?>"></td>
             <?php } ?>
                 </tr>
             <?php } ?>

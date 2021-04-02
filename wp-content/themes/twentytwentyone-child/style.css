@@ -10,7 +10,8 @@ Text Domain: twentytwentyone-child
 */
 
 body {
-    background-color: #ccc7e0;
+    /*background-color: #ccc7e0;*/
+    background-color: #4b672bcc;
 }
 .transfer-dropdown {
     background-color: white;
