@@ -11,7 +11,7 @@ Text Domain: twentytwentyone-child
 
 body {
     /*background-color: #ccc7e0;*/
-    background-color: #4b672bcc;
+    background-color: #be9f64;
 }
 .transfer-dropdown {
     background-color: white;
@@ -241,16 +241,26 @@ body {
     justify-content: center;
 }
 
-.gamefield-div table tbody{
-    background: url("/wp-content/uploads/2021/04/map.jpg") no-repeat;
+.gamefield-div table tbody {
+    border: 10px solid;
+    background: url("/wp-content/uploads/2021/04/field.jpg") no-repeat;
     background-size: cover;
 }
 
-.cell{
-    height: 70px;
-    width: 70px;
+.cell {
+    height: 80px;
+    width: 80px;
     border-style: solid;
-    border-width: 1px;
-    border-color: black;
-    display: inline-block;
+    border-width: 2px;
+}
+
+.popup {
+    display: none;
+    position: absolute;
+    color: #edd8af;
+    padding: 15px;
+    border: solid 1px #28303d;
+    background: #28303d;
+    text-align: center;
+    width: 20%;
 }
