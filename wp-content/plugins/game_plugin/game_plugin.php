@@ -84,8 +84,8 @@ function add_post_types()
             'has_archive' => true,
             'rewrite' => ['slug' => 'building'],
             'capability_type' => 'post',
-            'show_in_rest' => true,
-            'show_in_menu' => true,
+            'show_in_rest' => false,
+            'show_in_menu' => false,
             'menu_icon' => 'dashicons-admin-home',
             'supports' => ['title', 'editor', 'custom-fields'],
             'menu_position' => 3,
@@ -121,6 +121,52 @@ function add_building_type()
 
 add_action('init', 'add_building_type', 0);
 
+function building_type_menu()
+{
+    add_menu_page('Building Types', 'Building Types', 'add_users', 'edit-tags.php?taxonomy=building_type', '', 'dashicons-admin-home', 3);
+}
+
+add_action('admin_menu', 'building_type_menu');
+
+function user_balance($user)
+{
+    echo '<label for="balance"><h3>Balance</h3></label>
+    <input type="number" name="balance" id="balance" value="' . get_the_author_meta('balance', $user->ID) . '"/>$
+    <br/>';
+}
+
+add_action('show_user_profile', 'user_balance');
+add_action('edit_user_profile', 'user_balance');
+
+function save_user_balance($user_id)
+{
+    if (!is_admin($user_id)) {
+        update_user_meta($user_id, 'balance', $_POST['balance']);
+    }
+}
+
+add_action('personal_options_update', 'save_user_balance');
+add_action('edit_user_profile_update', 'save_user_balance');
+
+function building_box()
+{
+    add_meta_box(
+        'building',
+        __('Building', 'sitepoint'),
+        'building_box_content',
+        'cell',
+        'side'
+    );
+}
+
+add_action('add_meta_boxes_cell', 'building_box');
+
+function building_box_content($post)
+{
+    $building = get_post_meta($post->ID, '_building') ? get_the_title(get_post_meta($post->ID, '_building')[0]) : 'Cell is empty';
+    echo $building;
+}
+
 function building_type_box()
 {
     add_meta_box(
@@ -136,51 +182,91 @@ add_action('add_meta_boxes_building', 'building_type_box');
 
 function building_type_box_content($post)
 {
-    echo '<h3>Building Types';
-    $building_types = get_terms('building_type', ['hide_empty' => false]);;
-    $type = get_post_meta($post->ID, '_building_type');
-    foreach ($building_types as $building_type) {
-        echo '<label for="building_type"><h3>Building Types</h3></label>
-            <select name="building_type" id="building_type">';
-        echo '<option value="' . $building_type->slug . '" ' . ($type == $building_type->slug) ? "selected" : "" . '>' . $building_type->name . '</option>';
-    }
+    $type = get_post_meta($post->ID, '_building_type') ? ucfirst(get_post_meta($post->ID, '_building_type')[0]) : 'No type';
+    echo $type;
 }
 
+function cell_box()
+{
+    add_meta_box(
+        'cell',
+        __('Position', 'sitepoint'),
+        'cell_box_content',
+        'building',
+        'side'
+    );
+}
 
-function building_type_edit_image($term)
+add_action('add_meta_boxes_building', 'cell_box');
+
+function cell_box_content($post)
+{
+    $cell = get_post_meta($post->ID, '_cell') ? get_the_title(get_post_meta($post->ID, '_cell')[0]) : 'Not placed';
+    echo $cell;
+}
+
+function building_type_image($term)
 {
     echo '<img src="/wp-content/uploads/2021/04/' . $term->slug . '.png" alt="' . $term->name . '">';
 }
 
-add_action( 'building_type_edit_form_fields', 'building_type_edit_image', 10 );
+add_action('building_type_edit_form_fields', 'building_type_image', 10);
 
-function building_type_columns($building_type_columns): array
+function building_type_price($building_type)
 {
-    $new_columns = array(
+    $price = get_option('price_' . $building_type->slug);
+    $out = '<tr class="form-field">';
+    $out .= '<th scope="row"><label for="price">Price</label></th>';
+    $out .= '<td><input type="number" name="price" value="';
+    $out .= $price ? $price : '';
+    $out .= '">$</td></tr>';
+    echo $out;
+}
+
+add_action('building_type_edit_form_fields', 'building_type_price', 10);
+
+function building_type_price_save($term_id)
+{
+    if (isset($_POST['price'])) {
+        $building_type = get_term($term_id, 'building_type');
+        update_option('price_' . $building_type->slug, $_POST['price']);
+    }
+}
+
+add_action('create_building_type', 'building_type_price_save');
+add_action('edited_building_type', 'building_type_price_save');
+
+function building_type_columns(): array
+{
+    return [
         'cb' => '<input type="checkbox" />',
         'name' => __('Name'),
+        'price' => __('Price'),
         'header_icon' => __('Image'),
         'slug' => __('Slug'),
-        'posts' => __('Posts')
-    );
-    return $new_columns;
+        'posts' => __('Count')
+    ];
 }
 
 add_filter("manage_edit-building_type_columns", 'building_type_columns');
 
-function manage_building_type_columns($out, $column_name, $building_type_id) {
-    $theme = get_term($building_type_id, 'building_type');
+function manage_building_type_columns($out, $column_name, $building_type_id)
+{
+    $building_type = get_term($building_type_id, 'building_type');
     switch ($column_name) {
         case 'header_icon':
-            $data = maybe_unserialize($theme->description);
-            $out .= '<img src="/wp-content/uploads/2021/04/' . $theme->slug . '.png">';
+            $out .= '<img src="/wp-content/uploads/2021/04/' . $building_type->slug . '.png" style="width: 100px;">';
             break;
-
+        case 'price':
+            $price = get_option('price_' . $building_type->slug);
+            $out .= $price . '$';
+            break;
         default:
             break;
     }
     return $out;
 }
+
 add_filter("manage_building_type_custom_column", 'manage_building_type_columns', 10, 3);
 
 function get_cells(): array
@@ -208,9 +294,12 @@ function get_cells(): array
 
         while ($query->have_posts()) {
             $query->the_post();
+            $building_id = get_post_meta(get_the_ID(), '_building');
+            $building = $building_id ? get_post_meta($building_id[0], '_building_type')[0] : '';
             $cellscol[] = [
                 'x' => get_post_meta(get_the_ID(), '_x')[0],
-                'y' => get_post_meta(get_the_ID(), '_y')[0]
+                'y' => get_post_meta(get_the_ID(), '_y')[0],
+                'building' => $building
             ];
         }
         $cells[$i] = $cellscol;
@@ -219,33 +308,135 @@ function get_cells(): array
     return $cells;
 }
 
-function add_building()
+function handle_add_building()
 {
     $x = !empty($_POST['x']) ? $_POST['x'] : null;
     $y = !empty($_POST['y']) ? $_POST['y'] : null;
     $user_id = !empty($_POST['user_id']) ? $_POST['user_id'] : null;
     $building_type = !empty($_POST['building_type']) ? $_POST['building_type'] : null;
+    $price = get_option('price_' . $building_type);
     $user_balance = get_user_meta($user_id, 'balance')[0];
+    $response = [];
 
-    $res = [$building_type,
-        $user_id,
-        $user_balance,
-        $x,
-        $y];
+    if (!$x && !$y && !$user_id && !$building_type) {
+        $response = [
+            'status' => 'error',
+            'message' => 'Something went wrong!'
+        ];
+    }
 
-    wp_send_json($res);
+    if ($user_balance < $price) {
+        $response = [
+            'status' => 'error',
+            'message' => 'You have insufficient balance for this purchase!'
+        ];
+    }
+
+    if (empty($response)) {
+        $upd_balance = $user_balance - $price;
+        update_user_meta($user_id, 'balance', $upd_balance);
+        add_building($x, $y, $building_type);
+
+        $response = [
+            'status' => 'success',
+            'message' => 'A ' . ucfirst($building_type) . ' building was successfully bought',
+            'building' => $building_type
+        ];
+    }
+
+    wp_send_json($response);
 }
 
-add_action('wp_ajax_add_building', 'add_building');
+add_action('wp_ajax_handle_add_building', 'handle_add_building');
 
-function get_building_price()
+function add_building($x, $y, $building_type)
 {
-    $building_type = !empty($_POST['building_type']) ? $_POST['building_type'] : null;
+    $building_data = [
+        'post_type' => 'building',
+        'post_name' => 'building',
+        'post_title' => ucfirst($building_type),
+        'post_status' => 'publish',
+    ];
+    $building_id = wp_insert_post($building_data, true);
 
-    wp_send_json($building_type);
+    $query = new WP_Query([
+        'post_type' => 'cell',
+        'nopaging' => true,
+        'meta_query' => [
+            'relation' => 'AND',
+            [
+                'key' => '_y',
+                'value' => $y
+            ],
+            [
+                'key' => '_x',
+                'value' => $x,
+            ]
+        ],
+    ]);
+
+    if ($query->have_posts()) {
+        $query->the_post();
+        update_post_meta($building_id, '_cell', get_the_ID());
+        update_post_meta($building_id, '_building_type', $building_type);
+        update_post_meta(get_the_ID(), '_building', $building_id);
+    }
+
 }
 
-add_action('wp_ajax_get_building_price', 'get_building_price');
+function handle_remove_building()
+{
+    $x = !empty($_POST['x']) ? $_POST['x'] : null;
+    $y = !empty($_POST['y']) ? $_POST['y'] : null;
+    $user_id = !empty($_POST['user_id']) ? $_POST['user_id'] : null;
+    $building_type = !empty($_POST['building']) ? $_POST['building'] : null;
+    $response = [];
+
+    if (!$x && !$y && !$user_id && !$building_type) {
+        $response = [
+            'status' => 'error',
+            'message' => 'Something went wrong!'
+        ];
+    }
+
+    if (empty($response)) {
+        remove_building($x, $y);
+        $response = [
+            'status' => 'success',
+            'message' => 'A ' . ucfirst($building_type) . ' building was successfully removed',
+        ];
+    }
+
+    wp_send_json($response);
+}
+
+add_action('wp_ajax_handle_remove_building', 'handle_remove_building');
+
+function remove_building($x, $y)
+{
+    $query = new WP_Query([
+        'post_type' => 'cell',
+        'nopaging' => true,
+        'meta_query' => [
+            'relation' => 'AND',
+            [
+                'key' => '_y',
+                'value' => $y
+            ],
+            [
+                'key' => '_x',
+                'value' => $x,
+            ]
+        ],
+    ]);
+
+    if ($query->have_posts()) {
+        $query->the_post();
+        $building_id = get_post_meta(get_the_ID(), '_building')[0];
+        delete_post_meta(get_the_ID(), '_building', $building_id);
+        wp_delete_post($building_id);
+    }
+}
 
 function game_plugin_deactivate()
 {
@@ -261,10 +452,3 @@ function game_plugin_deactivate()
 }
 
 register_deactivation_hook(__FILE__, 'game_plugin_deactivate');
-
-/*
-barrack
-farm
-mine
-sawmill
-*/
