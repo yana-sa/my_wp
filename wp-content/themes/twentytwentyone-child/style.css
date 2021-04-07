@@ -244,7 +244,7 @@ body {
 
 .gamefield-div table tbody {
     border: 10px solid;
-    background: url("/wp-content/uploads/2021/04/field.jpg") no-repeat;
+    background: url("/wp-content/plugins/game_plugin/images/field.jpg") no-repeat;
     background-size: cover;
 }
 
@@ -305,4 +305,30 @@ body {
     justify-content: center;
     margin: auto;
     text-align: center;
+    font-size: 22px;
+    font-family: monospace;
+}
+
+.gamefield-div table .sad-game {
+    background: url("/wp-content/plugins/game_plugin/images/sad-map.png") no-repeat;
+    background-size: cover;
+}
+
+.harold {
+    display: none;
+    width: 80px;
+    height: 80px;
+    position: relative;
+    margin: 200px auto 0;
+    background: url("/wp-content/plugins/game_plugin/images/harold.png") no-repeat center;
+    background-size: contain;
+}
+
+.start {
+    width: 20%;
+    font-size: xx-large;
+    color: #edd8af;
+    background-color: #28303d;
+    border-radius: 5px;
+    align-self: center;
 }

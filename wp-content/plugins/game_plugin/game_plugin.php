@@ -12,9 +12,12 @@ function game_script_enqueue()
 {
     wp_register_script('game-js', get_stylesheet_directory_uri() . '/js/game.js', ['jquery']);
     wp_localize_script('game-js', 'myAjax', ['ajaxurl' => admin_url('admin-ajax.php')]);
+    wp_register_script('sad_game-js', get_stylesheet_directory_uri() . '/js/sad_game.js', ['jquery']);
+    wp_localize_script('sad_game-js', 'myAjax', ['ajaxurl' => admin_url('admin-ajax.php')]);
 
     wp_enqueue_script('jquery-js');
     wp_enqueue_script('game-js');
+    wp_enqueue_script('sad_game-js');
 }
 
 add_action('init', 'game_script_enqueue');
@@ -207,7 +210,7 @@ function cell_box_content($post)
 
 function building_type_image($term)
 {
-    echo '<img src="/wp-content/uploads/2021/04/' . $term->slug . '.png" alt="' . $term->name . '">';
+    echo '<img src="wp-content/plugins/game_plugin/images/' . $term->slug . '.png" alt="' . $term->name . '">';
 }
 
 add_action('building_type_edit_form_fields', 'building_type_image', 10);
@@ -255,7 +258,7 @@ function manage_building_type_columns($out, $column_name, $building_type_id)
     $building_type = get_term($building_type_id, 'building_type');
     switch ($column_name) {
         case 'header_icon':
-            $out .= '<img src="/wp-content/uploads/2021/04/' . $building_type->slug . '.png" style="width: 100px;">';
+            $out .= '<img src="/wp-content/plugins/game_plugin/images/' . $building_type->slug . '.png" style="width: 100px;">';
             break;
         case 'price':
             $price = get_option('price_' . $building_type->slug);

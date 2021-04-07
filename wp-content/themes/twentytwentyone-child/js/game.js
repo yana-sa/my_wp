@@ -46,7 +46,7 @@ function showBuildings() {
         var currentElement = jQuery(this);
         var building = currentElement.attr('data-building');
         if (building !== undefined) {
-            currentElement.css('background-image', 'url("/wp-content/uploads/2021/04/' + building + '.png")');
+            currentElement.css('background-image', 'url("/wp-content/plugins/game_plugin/images/' + building + '.png")');
         }
     });
 }
@@ -73,7 +73,7 @@ function add_building(popup) {
             success: function (response) {
                 if (response.status === "success") {
                     var cell = jQuery('.cell[data-x=' + x + '][data-y=' + y + ']');
-                    cell.css('background-image', 'url("/wp-content/uploads/2021/04/' + building_type + '.png")');
+                    cell.css('background-image', 'url("/wp-content/plugins/game_plugin/images/' + building_type + '.png")');
                     cell.attr('data-building', building_type);
                     jQuery('.overlay').show().fadeOut(2000);
                     jQuery('[data-message="message"]').text(response.message);
