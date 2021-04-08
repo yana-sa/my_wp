@@ -2,8 +2,12 @@ jQuery(document).ready(function () {
     showBuildings();
     jQuery(".cell").hover(function () {
         jQuery(this).css("background-color", "rgb(237 216 175 / 50%)");
+        if (jQuery(this).attr('data-building') !== undefined) {
+            jQuery(this).find('[data-form="remove"]').show();
+        }
     }, function () {
         jQuery(this).css("background-color", "unset");
+        jQuery(this).find('[data-form="remove"]').hide();
     });
 
     var popup = jQuery('.popup');
@@ -15,12 +19,11 @@ jQuery(document).ready(function () {
         popup.find('input[name="x"]').val(x);
         popup.find('input[name="y"]').val(y);
         jQuery('[data-xy="coordinates"]').text(x + ':' + y);
-        if (jQuery(this).attr('data-building') !== undefined) {
+        if (jQuery(this).attr('data-building') === undefined) {
             popup.hide();
-            jQuery('.popup.remove').show();
+            popup.show();
         } else {
             popup.hide();
-            jQuery('.popup.add').show();
         }
     });
 
@@ -38,7 +41,7 @@ jQuery(document).ready(function () {
         .trigger("change");
 
     add_building(popup);
-    remove_building(popup);
+    remove_building();
 })
 
 function showBuildings() {
@@ -75,6 +78,7 @@ function add_building(popup) {
                     var cell = jQuery('.cell[data-x=' + x + '][data-y=' + y + ']');
                     cell.css('background-image', 'url("/wp-content/plugins/game_plugin/images/' + building_type + '.png")');
                     cell.attr('data-building', building_type);
+                    cell.append('<form method="post" data-form="remove" class="remove-form"><input type="submit" class="remove" value="x"></form>');
                     jQuery('.overlay').show().fadeOut(2000);
                     jQuery('[data-message="message"]').text(response.message);
                 } else {
@@ -86,14 +90,12 @@ function add_building(popup) {
     });
 }
 
-function remove_building(popup) {
-    jQuery('[data-form="remove_building"]').submit(function (e) {
+function remove_building() {
+    jQuery('[data-form="remove"]').submit(function (e) {
         e.preventDefault();
-        var x = jQuery(this).find('input[name="x"]').val();
-        var y = jQuery(this).find('input[name="y"]').val();
+        var x = jQuery(this).closest('.cell').attr('data-x');
+        var y = jQuery(this).closest('.cell').attr('data-y');
         var building = jQuery('.cell[data-x=' + x + '][data-y=' + y + ']').attr('data-building');
-        var user_id = jQuery(this).find('input[data-input="user_id"]').val();
-        popup.hide();
         jQuery.ajax({
             type: "post",
             dataType: "json",
@@ -101,7 +103,6 @@ function remove_building(popup) {
             data: {
                 action: "handle_remove_building",
                 building: building,
-                user_id: user_id,
                 x: x,
                 y: y
             },
@@ -110,6 +111,7 @@ function remove_building(popup) {
                     var cell = jQuery('.cell[data-x=' + x + '][data-y=' + y + ']');
                     cell.css('background-image', 'unset');
                     cell.removeAttr('data-building');
+                    cell.find('[data-form="remove"]').remove();
                     jQuery('.overlay').show().fadeOut(2000);
                     jQuery('[data-message="message"]').text(response.message);
                 } else {

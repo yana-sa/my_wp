@@ -249,8 +249,9 @@ body {
 }
 
 .cell {
-    height: 80px;
-    width: 80px;
+    position: relative;
+    height: 100px;
+    width: 100px;
     border-style: solid;
     border-width: 2px;
     background-size: contain;
@@ -281,6 +282,7 @@ body {
 
 .overlay {
     position: fixed;
+    z-index: 1;
     padding: 100px;
     height: 100%;
     width: 100%;
@@ -309,18 +311,48 @@ body {
     font-family: monospace;
 }
 
+.remove-form {
+    display: none;
+}
+
+form .remove {
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    min-width: 30%;
+    max-height: 30%;
+    padding: 0;
+    border: unset;
+    color: #28303d;
+    background-color: #edd8af;
+}
+
 .gamefield-div table .sad-game {
     background: url("/wp-content/plugins/game_plugin/images/sad-map.png") no-repeat;
     background-size: cover;
 }
 
 .harold {
-    display: none;
     width: 80px;
     height: 80px;
     position: relative;
-    margin: 200px auto 0;
     background: url("/wp-content/plugins/game_plugin/images/harold.png") no-repeat center;
+    background-size: contain;
+}
+
+.boy-tears {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    background: url("/wp-content/plugins/game_plugin/images/boy-tears.png") no-repeat center;
+    background-size: contain;
+}
+
+.coin {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    background: url("/wp-content/plugins/game_plugin/images/coin.png") no-repeat center;
     background-size: contain;
 }
 

@@ -342,7 +342,7 @@ function handle_add_building()
 
         $response = [
             'status' => 'success',
-            'message' => 'A ' . ucfirst($building_type) . ' building was successfully bought',
+            'message' => ucfirst($building_type) . ' was successfully bought!',
             'building' => $building_type
         ];
     }
@@ -391,11 +391,10 @@ function handle_remove_building()
 {
     $x = !empty($_POST['x']) ? $_POST['x'] : null;
     $y = !empty($_POST['y']) ? $_POST['y'] : null;
-    $user_id = !empty($_POST['user_id']) ? $_POST['user_id'] : null;
     $building_type = !empty($_POST['building']) ? $_POST['building'] : null;
     $response = [];
 
-    if (!$x && !$y && !$user_id && !$building_type) {
+    if (!$x && !$y && !$building_type) {
         $response = [
             'status' => 'error',
             'message' => 'Something went wrong!'
@@ -406,7 +405,7 @@ function handle_remove_building()
         remove_building($x, $y);
         $response = [
             'status' => 'success',
-            'message' => 'A ' . ucfirst($building_type) . ' building was successfully removed',
+            'message' => ucfirst($building_type) . ' was successfully removed!',
         ];
     }
 
@@ -441,6 +440,42 @@ function remove_building($x, $y)
     }
 }
 
+function buildings_profit() {
+    if(!wp_next_scheduled('update_user_balance_hourly')) {
+        wp_schedule_event(time(), 'hourly', 'update_user_balance_hourly');
+    }
+}
+
+add_action('wp', 'buildings_profit');
+
+function update_user_balance()
+{
+    wp_reset_query();
+    $query = new WP_Query([
+        'post_type' => 'building',
+        'nopaging' => true,
+        'meta_key' => '_building_type',
+    ]);
+
+    while ($query->have_posts()) {
+        $query->the_post();
+        $building_type = get_post_meta(get_the_ID(), '_building_type')[0];
+        $user_id = get_the_author_meta('ID');
+        $user_balance = get_user_meta($user_id, 'balance')[0];
+        if ($building_type == 'farm') {
+            $upd_balance = $user_balance + 100;
+            update_user_meta($user_id, 'balance', $upd_balance);
+        }
+
+        if ($building_type == 'mine') {
+            $upd_balance = $user_balance + 200;
+            update_user_meta($user_id, 'balance', $upd_balance);
+        }
+    }
+}
+
+add_action('update_user_balance_hourly', 'update_user_balance');
+
 function game_plugin_deactivate()
 {
     $query = new WP_Query(['post_type' => ['cell', 'building']]);
@@ -451,6 +486,7 @@ function game_plugin_deactivate()
         wp_delete_post($post_id, true);
     }
 
+    wp_clear_scheduled_hook('update_user_balance_hourly');
     do_action('game_plugin_deactivate');
 }
 

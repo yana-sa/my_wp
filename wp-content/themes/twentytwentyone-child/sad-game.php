@@ -27,7 +27,6 @@ get_header();
         <div class="gamefield-div">
             <table>
                 <tbody class="sad-game">
-                <div class="harold"></div>
                 <?php $cells = get_cells();
                 foreach ($cells as $cellscol) { ?>
                     <tr>

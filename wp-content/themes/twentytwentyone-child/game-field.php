@@ -28,14 +28,16 @@ get_header();
                 foreach ($cells as $cellscol) { ?>
                 <tr>
             <?php foreach ($cellscol as $cell) {?>
-                <td class="cell" data-x="<?php echo $cell['x'] ?>" data-y="<?php echo $cell['y'] ?>" <?php echo $cell['building'] ? 'data-building="' . $cell['building'] . '"' : '' ?>"></td>
+                <td class="cell" data-x="<?php echo $cell['x'] ?>" data-y="<?php echo $cell['y'] ?>" <?php echo $cell['building'] ? 'data-building="' . $cell['building'] . '"' : '' ?>>
+                    <?php echo $cell['building'] ? '<form method="post" data-form="remove" class="remove-form"><input type="submit" class="remove" value="x"></form>' : '' ?>
+                </td>
             <?php } ?>
                 </tr>
             <?php } ?>
             </tbody>
         </table>
     </div>
-    <div class="popup add" style="">
+    <div class="popup" style="">
         <a class="close">&#10006;</a>
         <form method="post" data-form="buy_building" class="buildingForm">
         <h5>Buy a new building!</h5>
@@ -56,18 +58,6 @@ get_header();
             <input type="hidden" name="y" value="">
             <p>Your balance is <b><?php echo $user_balance[0]?>$</b></p>
         <input type="submit" value="Buy now!">
-        </form>
-    </div>
-    <div class="popup remove" style="">
-        <a class="close">&#10006;</a>
-        <form method="post" data-form="remove_building" class="buildingForm">
-            <h5>Remove this building?</h5>
-            <p data-xy="coordinates"></p>
-            <?php $user_id = get_current_user_id(); ?>
-            <input type="hidden" name="user_id" data-input="user_id" value="<?php echo $user_id ?>">
-            <input type="hidden" name="x" value="">
-            <input type="hidden" name="y" value="">
-            <input type="submit" value="Remove now!">
         </form>
     </div>
 <?php } else { ?>

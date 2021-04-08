@@ -1,35 +1,45 @@
-/* jQuery(document).ready(function () {
-    jQuery('.overlay').show();
+jQuery(document).ready(function () {
+/*    jQuery('.overlay').show();
     jQuery('.start').click(function () {
         jQuery('.overlay').hide();
     });
 
-    var startCell = jQuery('.cell[data-x=1][data-y=1]');
-    jQuery(".harold").show();
-    moveHarold();
-});*/
+    var haroldDiv = '<div class="harold"></div>';
+    var tearsDiv = '<div class="boy-tears"></div>';
+    var coinDiv = '<div class="coin"></div>';
+    jQuery('.cell[data-x=1][data-y=10]').append(haroldDiv);
+    jQuery('.cell[data-x=2][data-y=10]').append(tearsDiv);
+    jQuery('.cell[data-x=3][data-y=10]').append(coinDiv);
+    moveHarold(); */
+});
+
+function showIcons() {
+
+}
 
 function moveHarold() {
     jQuery(document).keydown(function(e){
+        var harold = jQuery(".harold");
+        var currentCell = harold.closest('.cell');
         switch (e.which){
-            case 37:
-                jQuery(".harold").finish().animate({
-                    left: "-=50"
+            case 65:
+                harold.finish().animate({
+                    left: "-=100"
                 });
                 break;
-            case 38:
-                jQuery(".harold").finish().animate({
-                    top: "-=50"
+            case 87:
+                harold.finish().animate({
+                    top: "-=100"
                 });
                 break;
-            case 39:
-                jQuery(".harold").finish().animate({
-                    left: "+=50"
+            case 68:
+                harold.finish().animate({
+                    left: "+=100"
                 });
                 break;
-            case 40:
-                jQuery(".harold").finish().animate({
-                    top: "+=50"
+            case 83:
+                harold.finish().animate({
+                    top: "+=100"
                 });
                 break;
         }
